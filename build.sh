@@ -8,14 +8,15 @@ echo "                ponces                "
 echo "--------------------------------------"
 echo
 
-set -e
+#set -e
 
 BL=$PWD/treble_aosp
 BD=$HOME/builds
+BV=$1
 
 initRepos() {
     echo "--> Initializing workspace"
-    repo init -u https://android.googlesource.com/platform/manifest -b android-14.0.0_r45 --git-lfs
+    repo init -u https://android.googlesource.com/platform/manifest -b android-14.0.0_r50 --git-lfs
     echo
 
     echo "--> Preparing local manifest"
@@ -23,13 +24,15 @@ initRepos() {
     cp $BL/build/default.xml .repo/local_manifests/default.xml
     cp $BL/build/remove.xml .repo/local_manifests/remove.xml
     echo
+    choice
 }
 
 syncRepos() {
     echo "--> Syncing repos"
-    repo sync -c --force-sync --no-clone-bundle --no-tags -j$(nproc --all) || repo sync -c --force-sync --no-clone-bundle --no-tags -j$(nproc --all)
+    repo sync --force-sync -j$(nproc --all) || repo sync --force-sync -j$(nproc --all)
     echo
-}
+    choice
+}   
 
 applyPatches() {
     echo "--> Applying TrebleDroid patches"
@@ -46,6 +49,7 @@ applyPatches() {
     bash generate.sh aosp
     cd ../../..
     echo
+    choice
 }
 
 setupEnv() {
@@ -53,6 +57,7 @@ setupEnv() {
     source build/envsetup.sh &>/dev/null
     mkdir -p $BD
     echo
+    choice
 }
 
 buildTrebleApp() {
@@ -62,15 +67,39 @@ buildTrebleApp() {
     cp TrebleApp.apk ../vendor/hardware_overlay/TrebleApp/app.apk
     cd ..
     echo
+    choice
 }
 
 buildVariant() {
     echo "--> Building $1"
-    lunch "$1"-ap1a-userdebug
+    lunch "$1"-ap2a-userdebug
     make -j$(nproc --all) installclean
     make -j$(nproc --all) systemimage
-    mv $OUT/system.img $BD/system-"$1".img
+    #make -j$(nproc --all) target-files-package otatools
+    #bash $BL/sign.sh "vendor/ponces-priv/keys" $OUT/signed-target_files.zip
+    #unzip -jqo $OUT/signed-target_files.zip IMAGES/system.img -d $OUT
+    #mv $OUT/system.img $BD/system-"$1".img
     echo
+    choice
+}
+
+signImage(){
+    echo "--> Sign $1"
+    . build/envsetup.sh && lunch "$1"-ap2a-userdebug
+    echo "----> Set key is needed---->"
+    
+subject='/C=IT/ST=Catania/L=Bronte/O=Android/OU=Android/CN=Android/emailAddress=salvinoschillaci@gmail.com'
+rm -rf ~/.android-certs
+mkdir ~/.android-certs
+for x in releasekey platform shared media networkstack;
+do ./development/tools/make_key ~/.android-certs/$x "$subject";
+   done                                                    
+
+    echo "---> make dist <---"
+    make dist
+    sign_target_files_apks -o --default_key_mappings ~/.android-certs out/dist/*-target_files-*.zip signed-target_files.zip
+    echo
+    choice
 }
 
 buildVndkliteVariant() {
@@ -85,16 +114,26 @@ buildVndkliteVariant() {
 }
 
 buildVariants() {
-    #buildVariant treble_a64_bvN
-    #buildVariant treble_a64_bgN
-    #buildVariant treble_arm64_bvN
+   # buildVariant treble_a64_bvN
+   # buildVariant treble_a64_bgN
+   # buildVariant treble_arm64_bvN
     buildVariant treble_arm64_bgN
-    #buildVndkliteVariant treble_a64_bvN
-    #buildVndkliteVariant treble_a64_bgN
-    #buildVndkliteVariant treble_arm64_bvN
-    #buildVndkliteVariant treble_arm64_bgN
+   # buildVndkliteVariant treble_a64_bvN
+   # buildVndkliteVariant treble_a64_bgN
+   # buildVndkliteVariant treble_arm64_bvN
+   # buildVndkliteVariant treble_arm64_bgN
 }
 
+signImages() {
+   # buildVariant treble_a64_bvN
+   # buildVariant treble_a64_bgN
+   # buildVariant treble_arm64_bvN
+    signImage treble_arm64_bgN
+   # buildVndkliteVariant treble_a64_bvN
+   # buildVndkliteVariant treble_a64_bgN
+   # buildVndkliteVariant treble_arm64_bvN
+   # buildVndkliteVariant treble_arm64_bgN
+}
 generatePackages() {
     echo "--> Generating packages"
     buildDate="$(date +%Y%m%d)"
@@ -133,16 +172,54 @@ generateOta() {
     echo
 }
 
+choice() {
+
+    echo -n "Enter choice: "
+echo "1. Initializing Repos"
+    
+echo "2. Syncing Repos"
+    
+echo "3. Applying patches"
+    
+echo "4. Setting up build environment"
+    
+echo "5. Building treble_app"
+    
+echo "6. Building "$1" "
+    
+echo "7. Signing "$1" "
+
+read C
+
+case "$C" in
+"1") 
+    initRepos
+    ;;
+"2") 
+    syncRepos
+    ;;
+"3") 
+    applyPatches
+    ;;
+"4") 
+    setupEnv
+    ;;
+"5") 
+    buildTrebleApp
+    ;;
+"6") 
+    [ ! -z "$BV" ] && buildVariant "$BV" || buildVariants
+    ;;
+"7") 
+    [ ! -z "$BV" ] && signImage "$BV" || signImages
+    ;;
+esac
+}
+
 START=$(date +%s)
 
-initRepos
-syncRepos
-applyPatches
-setupEnv
-buildTrebleApp
-buildVariants
-generatePackages
-#generateOta
+choice
+
 
 END=$(date +%s)
 ELAPSEDM=$(($(($END-$START))/60))

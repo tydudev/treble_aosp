@@ -15,7 +15,7 @@ TD="android-14.0"
 
 initRepos() {
     echo "--> Getting latest upstream version"
-    aosp=$(curl -sL https://github.com/TrebleDroid/treble_manifest/raw/android-14.0/replace.xml | grep -oP "android-14.0.0_r\d+" | head -1)
+    aosp=$(curl -sL https://github.com/TrebleDroid/treble_manifest/raw/$TD/replace.xml | grep -oP "${TD}.0_r\d+" | head -1)
     
     echo "--> Initializing workspace"
     repo init -u https://android.googlesource.com/platform/manifest -b "$aosp"
@@ -53,22 +53,12 @@ updatePatches() {
     echo
 }
 
-commitPatches() {
-    echo "--> Committing patches"
-    pushd $BL &>/dev/null
-    git add patches/trebledroid
-    git commit -m "feat: sync with latest sources of TrebleDroid"
-    git push
-    popd &>/dev/null
-}
-
 START=$(date +%s)
 
 initRepos
 syncRepos
 generatePatches
 updatePatches
-commitPatches
 
 END=$(date +%s)
 ELAPSEDM=$(($(($END-$START))/60))
