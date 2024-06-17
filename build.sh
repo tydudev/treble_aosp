@@ -189,6 +189,8 @@ echo "6. Building "$1" "
     
 echo "7. Signing "$1" "
 
+echo "Choice: "
+
 read C
 
 case "$C" in
