@@ -16,7 +16,7 @@ BV=$1
 
 initRepos() {
     echo "--> Initializing workspace"
-    repo init -u https://android.googlesource.com/platform/manifest -b android-14.0.0_r50 --git-lfs
+    repo init -u https://android.googlesource.com/platform/manifest -b android-14.0.0_r51 --git-lfs
     echo
 
     echo "--> Preparing local manifest"
@@ -29,7 +29,7 @@ initRepos() {
 
 syncRepos() {
     echo "--> Syncing repos"
-    repo sync --force-sync -j$(nproc --all) || repo sync --force-sync -j$(nproc --all)
+    repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
     echo
     choice
 }   
@@ -91,7 +91,7 @@ signImage(){
 subject='/C=IT/ST=Catania/L=Bronte/O=Android/OU=Android/CN=Android/emailAddress=salvinoschillaci@gmail.com'
 rm -rf ~/.android-certs
 mkdir ~/.android-certs
-for x in releasekey platform shared media networkstack;
+for x in releasekey platform shared media networkstack sdk_sandbox;
 do ./development/tools/make_key ~/.android-certs/$x "$subject";
    done                                                    
 
@@ -174,7 +174,8 @@ generateOta() {
 
 choice() {
 
-    echo -n "Enter choice: "
+echo "Enter choice: "
+
 echo "1. Initializing Repos"
     
 echo "2. Syncing Repos"
@@ -189,7 +190,7 @@ echo "6. Building "$1" "
     
 echo "7. Signing "$1" "
 
-echo "Choice: "
+echo "Choice: " 
 
 read C
 

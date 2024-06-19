@@ -1,4 +1,4 @@
-From 46917bca9dc54c2c936a2c6ad417c2d37b701b1c Mon Sep 17 00:00:00 2001
+From 03eb55b2a72fc63f335f520603f09ccf1e4e79fc Mon Sep 17 00:00:00 2001
 From: wbs306 <wbs306@gmail.com>
 Date: Fri, 20 Jan 2023 17:07:41 +0800
 Subject: [PATCH 8/8] gd: hci: Ignore command READ_REMOTE_VERSION_INFORMATION
@@ -14,7 +14,7 @@ It means this command isn't in the command_queue_, we can just ignore it.
  1 file changed, 4 insertions(+)
 
 diff --git a/system/gd/hci/hci_layer.cc b/system/gd/hci/hci_layer.cc
-index d91bb14..b1b72b5 100644
+index d91bb1480d..b1b72b5d9e 100644
 --- a/system/gd/hci/hci_layer.cc
 +++ b/system/gd/hci/hci_layer.cc
 @@ -390,6 +390,10 @@ struct HciLayer::impl {

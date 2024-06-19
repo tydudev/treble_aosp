@@ -1,4 +1,4 @@
-From 5802fa7a74226b89064edd88e8acc83e144f96b1 Mon Sep 17 00:00:00 2001
+From ce712b5cfed6a037d90daef047717e68f0ad1d2f Mon Sep 17 00:00:00 2001
 From: Pierre-Hugues Husson <phh@phh.me>
 Date: Fri, 28 Apr 2023 12:29:05 -0400
 Subject: [PATCH 12/26] Allow apex on > 5.0 kernels. This is needed because on
@@ -10,7 +10,7 @@ Change-Id: I334cde4c5557b0ff70d550205c5bb727d4b5dbf5
  1 file changed, 14 insertions(+), 1 deletion(-)
 
 diff --git a/init/property_service.cpp b/init/property_service.cpp
-index eedad50..dbd1e61 100644
+index eedad50f3..dbd1e61a5 100644
 --- a/init/property_service.cpp
 +++ b/init/property_service.cpp
 @@ -64,6 +64,7 @@

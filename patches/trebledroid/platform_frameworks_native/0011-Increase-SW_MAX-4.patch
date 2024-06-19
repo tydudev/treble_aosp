@@ -1,4 +1,4 @@
-From fa0f46f45d79aaafb44add93c60ab38b4cae3364 Mon Sep 17 00:00:00 2001
+From 0667dfcbec36b7a77e9fb8f487696c1298e818b0 Mon Sep 17 00:00:00 2001
 From: Pierre-Hugues Husson <phh@phh.me>
 Date: Sat, 3 Feb 2024 07:38:33 -0500
 Subject: [PATCH 11/13] Increase SW_MAX *= 4
@@ -14,7 +14,7 @@ We increase the size of SW_MAX for two reasons:
  2 files changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/services/inputflinger/reader/EventHub.cpp b/services/inputflinger/reader/EventHub.cpp
-index a2b5d7d..2697ae1 100644
+index a2b5d7d8b0..2697ae1d36 100644
 --- a/services/inputflinger/reader/EventHub.cpp
 +++ b/services/inputflinger/reader/EventHub.cpp
 @@ -1118,7 +1118,7 @@ int32_t EventHub::getKeyCodeForKeyLocation(int32_t deviceId, int32_t locationKey
@@ -36,7 +36,7 @@ index a2b5d7d..2697ae1 100644
              device->classes |= InputDeviceClass::SWITCH;
              break;
 diff --git a/services/inputflinger/reader/include/EventHub.h b/services/inputflinger/reader/include/EventHub.h
-index a7e0675..f33ee5a 100644
+index a7e06756d0..f33ee5aa96 100644
 --- a/services/inputflinger/reader/include/EventHub.h
 +++ b/services/inputflinger/reader/include/EventHub.h
 @@ -635,8 +635,8 @@ private:

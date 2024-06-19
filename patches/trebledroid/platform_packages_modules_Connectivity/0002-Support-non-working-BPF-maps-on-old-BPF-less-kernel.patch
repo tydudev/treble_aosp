@@ -1,7 +1,7 @@
 From 17e44306f7536bed11764065f6f2108a057fa9b6 Mon Sep 17 00:00:00 2001
 From: Pierre-Hugues Husson <phh@phh.me>
 Date: Wed, 26 Oct 2022 18:11:10 -0400
-Subject: [PATCH 02/11] Support non-working BPF maps on old BPF-less kernel
+Subject: [PATCH 02/10] Support non-working BPF maps on old BPF-less kernel
 
 ---
  .../src/android/net/BpfNetMapsReader.java     | 13 +++++--
