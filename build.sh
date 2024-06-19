@@ -13,42 +13,43 @@ echo
 BL=$PWD/treble_aosp
 BD=$HOME/builds
 BV=$1
+release="r51"
 
 initRepos() {
     echo "--> Initializing workspace"
-    repo init -u https://android.googlesource.com/platform/manifest -b android-14.0.0_r51 --git-lfs
-    echo
+    repo init -u https://android.googlesource.com/platform/manifest -b android-14.0.0_$release --git-lfs
+    echo "->ok!<-"
 
     echo "--> Preparing local manifest"
     mkdir -p .repo/local_manifests
     cp $BL/build/default.xml .repo/local_manifests/default.xml
     cp $BL/build/remove.xml .repo/local_manifests/remove.xml
-    echo
+    echo "->ok!<-"
     choice
 }
 
 syncRepos() {
     echo "--> Syncing repos"
     repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
-    echo
+    echo "->ok!<-"
     choice
 }   
 
 applyPatches() {
     echo "--> Applying TrebleDroid patches"
     bash $BL/patch.sh $BL trebledroid
-    echo
+    echo "->ok!<-"
 
     echo "--> Applying personal patches"
     bash $BL/patch.sh $BL personal
-    echo
+    echo "->ok!<-"
 
     echo "--> Generating makefiles"
     cd device/phh/treble
     cp $BL/build/aosp.mk .
     bash generate.sh aosp
     cd ../../..
-    echo
+    echo "->ok!<-"
     choice
 }
 
@@ -56,7 +57,7 @@ setupEnv() {
     echo "--> Setting up build environment"
     source build/envsetup.sh &>/dev/null
     mkdir -p $BD
-    echo
+    echo "->ok!<-"
     choice
 }
 
@@ -66,7 +67,7 @@ buildTrebleApp() {
     bash build.sh release
     cp TrebleApp.apk ../vendor/hardware_overlay/TrebleApp/app.apk
     cd ..
-    echo
+    echo "->ok!<-"
     choice
 }
 
@@ -79,26 +80,29 @@ buildVariant() {
     #bash $BL/sign.sh "vendor/ponces-priv/keys" $OUT/signed-target_files.zip
     #unzip -jqo $OUT/signed-target_files.zip IMAGES/system.img -d $OUT
     #mv $OUT/system.img $BD/system-"$1".img
-    echo
+    echo "->ok!<-"
     choice
 }
 
 signImage(){
     echo "--> Sign $1"
     . build/envsetup.sh && lunch "$1"-ap2a-userdebug
-    echo "----> Set key is needed---->"
-    
-subject='/C=IT/ST=Catania/L=Bronte/O=Android/OU=Android/CN=Android/emailAddress=salvinoschillaci@gmail.com'
-rm -rf ~/.android-certs
-mkdir ~/.android-certs
-for x in releasekey platform shared media networkstack sdk_sandbox;
-do ./development/tools/make_key ~/.android-certs/$x "$subject";
-   done                                                    
-
-    echo "---> make dist <---"
+    echo "--> Set personal keys"
+    subject='/C=IT/ST=Catania/L=Bronte/O=Android/OU=Android/CN=Android/emailAddress=salvinoschillaci@gmail.com'
+    rm -rf ~/.android-certs
+    mkdir ~/.android-certs
+    for x in releasekey platform shared media networkstack sdk_sandbox;
+    do ./development/tools/make_key ~/.android-certs/$x "$subject";
+    done                                                    
+    echo "--> Make Dist"
     make dist
     sign_target_files_apks -o --default_key_mappings ~/.android-certs out/dist/*-target_files-*.zip signed-target_files.zip
-    echo
+    img_from_target_files signed-target_files.zip signed-img.zip
+    echo "--> Rename Packages"
+    buildDate="$(date +%Y%m%d)"
+    mv signed-img.zip treble_arm64_bgN-tydu-14.0.0_$release-$buildDate
+    rm -rf signed-img.zip
+    echo "->ok!<-"
     choice
 }
 
