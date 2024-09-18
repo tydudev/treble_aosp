@@ -16,7 +16,7 @@ BV=$1
 
 initRepos() {
     echo "--> Initializing workspace"
-    repo init -u https://android.googlesource.com/platform/manifest -b android-14.0.0_r55 --git-lfs
+    repo init -u https://android.googlesource.com/platform/manifest -b android-14.0.0_r73 --git-lfs
     echo
 
     echo "--> Preparing local manifest"
@@ -89,14 +89,14 @@ buildVndkliteVariant() {
 }
 
 buildVariants() {
-    buildVariant treble_a64_bvN
-    buildVariant treble_a64_bgN
-    buildVariant treble_arm64_bvN
+    #buildVariant treble_a64_bvN
+    #buildVariant treble_a64_bgN
+    #buildVariant treble_arm64_bvN
     buildVariant treble_arm64_bgN
-    buildVndkliteVariant treble_a64_bvN
-    buildVndkliteVariant treble_a64_bgN
-    buildVndkliteVariant treble_arm64_bvN
-    buildVndkliteVariant treble_arm64_bgN
+    #buildVndkliteVariant treble_a64_bvN
+    #buildVndkliteVariant treble_a64_bgN
+    #buildVndkliteVariant treble_arm64_bvN
+    #buildVndkliteVariant treble_arm64_bgN
 }
 
 generatePackages() {
@@ -145,8 +145,8 @@ applyPatches
 setupEnv
 buildTrebleApp
 [ ! -z "$BV" ] && buildVariant "$BV" || buildVariants
-generatePackages
-generateOta
+#generatePackages
+#generateOta
 
 END=$(date +%s)
 ELAPSEDM=$(($(($END-$START))/60))
