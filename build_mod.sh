@@ -66,25 +66,19 @@ buildTrebleApp() {
 }
 
 buildVariant() {
-    echo "--> Building $1"
+   echo "--> Building $1"
     lunch "$1"-ap2a-userdebug
     make -j$(nproc --all) installclean
     make -j$(nproc --all) systemimage
-    #make -j$(nproc --all) target-files-package otatools
+    make -j$(nproc --all) target-files-package otatools
     #bash $BL/sign.sh "vendor/ponces-priv/keys" $OUT/signed-target_files.zip
-    echo "--> Building $1"
-    lunch "$1"-ap2a-userdebug
-    make -j$(nproc --all) installclean
-    make -j$(nproc --all) systemimage
-    #make -j$(nproc --all) target-files-package otatools
-    #bash $BL/sign.sh "vendor/ponces-priv/keys" $OUT/signed-target_files.zip
-    subject='/C=US/ST=California/L=Mountain View/O=Android/OU=Android/CN=Android/emailAddress=salvinoschillaci@gmail.com'
-    mkdir ~/.android-certs
-    for x in releasekey platform shared media networkstack; do ./development/tools/make_key ~/.android-certs/$x "$subject"; done
-    make dist
-    sign_target_files_apks -o --default_key_mappings ~/.android-certs out/dist/*-target_files-*.zip signed-target_files.zip
-    unzip -jo $OUT/signed-target_files.zip IMAGES/system.img -d $OUT
-    mv $OUT/system.img $BD/system-"$1".img
+    #subject='/C=US/ST=California/L=Mountain View/O=Android/OU=Android/CN=Android/emailAddress=salvinoschillaci@gmail.com'
+    #mkdir ~/.android-certs
+    #for x in releasekey sdk_sandbox platform shared media networkstack; do ./development/tools/make_key ~/.android-certs/$x "$subject"; done
+    #make dist
+    sign_target_files_apks -o --default_key_mappings ~/.android-certs out/target/product/tdgsi_arm64_ab/obj/PACKAGING/target_files_intermediates/*-target_files*.zip signed-target_files.zip
+    unzip -jo out/target/product/tdgsi_arm64_ab/obj/PACKAGING/target_files_intermediates/signed-target_files.zip IMAGES/system.img -d out/target/product/tdgsi_arm64_ab/obj/PACKAGING/target_files_intermediates/
+    mv out/target/product/tdgsi_arm64_ab/obj/PACKAGING/target_files_intermediates/system.img $BD/system-"$1".img
     echo
 }
 
