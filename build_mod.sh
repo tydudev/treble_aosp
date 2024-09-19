@@ -77,8 +77,8 @@ buildVariant() {
     #for x in releasekey sdk_sandbox platform shared media networkstack; do ./development/tools/make_key ~/.android-certs/$x "$subject"; done
     #make dist
     sign_target_files_apks -o --default_key_mappings ~/.android-certs out/target/product/tdgsi_arm64_ab/obj/PACKAGING/target_files_intermediates/*-target_files*.zip signed-target_files.zip
-    unzip -jo out/target/product/tdgsi_arm64_ab/obj/PACKAGING/target_files_intermediates/signed-target_files.zip IMAGES/system.img -d out/target/product/tdgsi_arm64_ab/obj/PACKAGING/target_files_intermediates/
-    mv out/target/product/tdgsi_arm64_ab/obj/PACKAGING/target_files_intermediates/system.img $BD/system-"$1".img
+    unzip -jo signed-target_files.zip IMAGES/system.img -d $BD
+    mv $BD/system.img $BD/system-"$1"-tydu-$buildDate.img
     echo
 }
 
