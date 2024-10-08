@@ -12,7 +12,7 @@ To get started with building AOSP GSI, you'll need to get familiar with [Git and
     ```
 - Finally, start the build script:
     ```
-    bash treble_aosp/build.sh
+    bash treble_aosp/build_mod.sh
     ```
 
 ## Issues
