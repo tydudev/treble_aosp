@@ -9,6 +9,7 @@ To get started with building AOSP GSI, you'll need to get familiar with [Git and
 - Clone this repo:
     ```
     git clone https://github.com/tydudev/treble_aosp -b android-14.0
+    git clone https://github.com/tydudev/lineage_patches_unified lineage_patches_unified -b lineage-21-light
     ```
 - Finally, start the build script:
     ```
